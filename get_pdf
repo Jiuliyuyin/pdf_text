@@ -1,0 +1,48 @@
+import pdfplumber
+import pandas as pd
+
+path = input("Plz enter filename:") + ".pdf"
+
+
+# 读取pdf文件
+def read(self):
+    with pdfplumber.open(self) as pdf:
+        # 输入想获取数据所在的页数
+        pages = int(input("Plz enter pages:"))
+        self = pdf.pages[pages-1]
+        self = self.extract_text()
+        return self
+
+
+# 查找爬取内容位置并返回内容
+def search(self):
+    # 爬取内容的开头部分
+    start_words = input("Plz enter a Start-Keyword:")
+    # 爬取内容的结尾部分
+    end_words = input("Plz enter a End-Keyword:")
+
+    s_index = self.find(start_words)
+    e_index = self.find(end_words)
+
+    get_text = self[s_index: e_index+len(end_words)]
+    return get_text
+
+
+# 将获取内容写入csv文件
+def w_csv(self):
+    csv_name = input("Plz enter your csv_name:") + '.csv'
+    row = int(input("Plz enter row_number:")) - 1
+    column = input("Plz enter column_name:")
+
+    df = pd.read_csv(csv_name)
+    df[column][row] = self
+    df1 = df.to_csv(csv_name, index=None)
+    return df1
+
+
+if __name__ == '__main__':
+    # Received 2010
+    get = read(path)
+    get_txt = search(get)
+    data = w_csv(get_txt)
+
